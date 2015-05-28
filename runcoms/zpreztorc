@@ -32,7 +32,20 @@ zstyle ':prezto:load' pmodule \
   'spectrum' \
   'utility' \
   'completion' \
-  'prompt'
+  'archive' \
+  'completion' \
+  'git' \
+  'homebrew' \
+  'node' \
+  'ruby' \
+  'rails' \
+  'screen' \
+  'ssh' \
+  'node' \
+  'tmux' \
+  'syntax-highlighting' \
+  'history-substring-search' \
+  'prompt' 
 
 #
 # Editor

@@ -16,3 +16,6 @@
 [submodule "modules/prompt/functions/pure"]
 	path = modules/prompt/external/pure
 	url = https://github.com/sindresorhus/pure.git
+[submodule "modules/git-flow"]
+	path = modules/git-flow
+	url = https://github.com/bobthecow/git-flow-completion.git

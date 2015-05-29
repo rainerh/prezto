@@ -6,24 +6,55 @@
 #
 
 export DOTFILES=$HOME/.dotfiles
+export ZSH=$DOTFILES/zsh
+
+# define the code directory
+if [[ -d ~/code ]]; then
+    export CODE_DIR=~/code
+fi
 
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
+
 # Customize to your needs...
 # Source functions.
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/functions.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/functions.zsh"
+fpath=($ZSH/functions $fpath)
+autoload -U $ZSH/functions/*(:t)
+
+if [[ -s "${ZSH}/includes/functions.zsh" ]]; then
+  source "${ZSH}/includes/functions.zsh"
 fi
+
+
+# Load all of the config files in $ZSH/includes that end in .zsh
+for env_file ($ZSH/includes/env.*.zsh); do
+  source $env_file
+done
+
+
+# Load all of the alias config files in $ZSH/includes that end in .zsh
+for alias_file ($ZSH/includes/aliases.*.zsh); do
+  source $alias_file
+done
+
 
 # Load local aliases if they exist
-if [[ -s "${ZDOTDIT:-$HOME}/.aliases" ]]; then
-  source "${ZDOTDIT:-$HOME}/.aliases"
+#if [[ -s "${ZDOTDIT:-$HOME}/.aliases" ]]; then
+#  source "${ZDOTDIT:-$HOME}/.aliases"
+#fi
+
+# Load custom keybindings if they exist
+if [[ -s "${ZSH}/includes/keybindings.zsh" ]]; then
+  source "${ZSH}/includes/keybindings.zsh"
 fi
 
-
+# Load custom completions if they exist
+if [[ -s "${ZSH}/includes/completion.zsh" ]]; then
+  source "${ZSH}/includes/completion.zsh"
+fi
 
 ## Base16 Shell
 #if [ -z "$THEME" ]; then
@@ -38,234 +69,15 @@ fi
 #source $BASE16_SHELL
 
 
-###############################################################################
-# general aliases
-###############################################################################
-alias ll='ls -lGh'
-alias l='ls -laGh'
-alias lt='ls -ltGh'
-alias md='mkdir -p'
-alias hr='fc -RI' # read in history from other shells only when you need it
-alias hs='pushd ~ && git add .zhistory && git commit -m ".zhistory" && popd' # commit shell history to source control
-alias pop='popd'
-alias vi='vim'
-alias deploy-mvn-artifacts='mvn clean install javadoc:jar source:jar deploy'
-if [[ "$OSTYPE" == darwin* ]]; then
-    alias hibernateon="sudo pmset -a hibernatemode 7"
-    alias hibernateoff="sudo pmset -a hibernatemode 0"
-    alias tomcat_start='./bin/startup.sh;tail -F logs/catalina.out'
-    alias jpda_start='export JPDA_ADDRESS=8000;export JPDA_TRANSPORT=dt_socket;./bin/catalina.sh jpda start;tail -F logs/catalina.out'
-    alias sak2cookie='export JAVA_OPTS="$JAVA_OPTS -Dsakai.cookieName=SAKAI2SESSIONID"'
-fi
 
-alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
-alias vlc='/Applications/VLC.app/Contents/MacOS/VLC --intf=rc'
-alias pip-update="pip freeze --local | sed 's/==.*//' | xargs -I % pip install -U %"
-alias nocomment="grep -v '^$\|^\s*\#'"
-
-# reload zsh config
-alias reload!='source ~/.zshrc'
-
-
-###############################################################################
-# Functions
-###############################################################################
-update() {
-    local brew='brew update; brew upgrade; brew cleanup'
-    local gisty='gisty pull_all; gisty sync_delete'
-    local gem='gem update'
-    local pip='pip-update'
-    pyenv shell 2.7.9
-    eval "$brew;$gisty;$pip"
-    pyenv shell 3.4.3
-    eval "$gem;$pip"
-}
-
-# take
-function take() {
- mkdir -p $1
- cd $1
-}
-
-function y() {
- cd ~/music
- youtube-dl --extract-audio --audio-format mp3 --audio-quality 0 $1
-}
-
-###############################################################################
-# Key bindings
-###############################################################################
-bindkey -M viins '^R' history-incremental-search-backward
-bindkey -M vicmd '^R' history-incremental-search-backward
-
-###############################################################################
-# git
-###############################################################################
-alias st='git status'
-alias pu='git push'
-alias pl='git pull'
-alias gti='git' # common typo
-
-
-###############################################################################
-# AWS EC2 general
-###############################################################################
-AWS_CREDENTIAL_FILE_PATH="$HOME/.ec2/aws_credential_file"
-if [[ -f $AWS_CREDENTIAL_FILE_PATH ]]; then
-    export EC2_URL=https://ec2.us-west-1.amazonaws.com
-    export AWS_CREDENTIAL_FILE="$AWS_CREDENTIAL_FILE_PATH"
-fi
-
-###############################################################################
-# compiler options
-###############################################################################
-if [[ "$OSTYPE" == darwin* ]]; then
-    # Use Apple's llvm-gcc compiler
-    # export CC=/usr/bin/llvm-gcc
-    # export CXX=/usr/bin/llvm-g++
-    # export OBJC=/usr/bin/llvm-gcc
-    export ARCHFLAGS="-arch $CPUTYPE"
-fi
-
-###############################################################################
-# environment
-###############################################################################
-export LC_CTYPE=en_US.UTF-8
-if [[ "$OSTYPE" == darwin* ]]; then
-    export DISPLAY=:0.0
-fi
-
-###############################################################################
-# Heroku Toolbelt
-###############################################################################
-HERO_BIN_PATH="/usr/local/heroku/bin"
-if [[ -d "$HERO_BIN_PATH" ]]; then
-    export PATH="$HERO_BIN_PATH:$PATH"
-fi
-
-###############################################################################
-# home directory bin directory
-###############################################################################
-HOME_BIN_PATH="$HOME/bin"
-if [[ -d "$HOME_BIN_PATH" ]]; then
-    export PATH="$HOME_BIN_PATH:$PATH"
-fi
-
-###############################################################################
-# java
-###############################################################################
-if [[ "$OSTYPE" == darwin* ]]; then
-    alias psj='ps ax | grep java | grep -v CrashPlanService | grep -v "grep java"'
-
-    # java 6 oracle jdk
-    # export JAVA_HOME=`/usr/libexec/java_home -d64 -v 1.6`
-    
-    # java 7 oracle jdk
-    # export JAVA_HOME=`/usr/libexec/java_home -d64 -v 1.7`
-
-    # java 8 oracle jdk
-    export JAVA_HOME=`/usr/libexec/java_home /usr/libexec/java_home -v 1.8.0`
-else # assume linux
-    if [[ -L  '/etc/alternatives/java_sdk' ]]; then
-        export JAVA_HOME='/etc/alternatives/java_sdk'
-    else
-        export JAVA_HOME='/etc/alternatives/jre'
-    fi
-fi
-export JRE_HOME="$JAVA_HOME"
-export PATH="$JAVA_HOME/bin:$PATH"
-
-export JAVA_OPTS="-server \
--Xms1g \
--Xmx1g \
--XX:PermSize=512m \
--XX:MaxPermSize=512m \
--XX:+UseG1GC \
--XX:MaxGCPauseMillis=200 \
--XX:InitiatingHeapOccupancyPercent=45 \
--XX:G1ReservePercent=10 \
--XX:+DisableExplicitGC \
--XX:+UseCompressedOops \
--XX:+UseStringCache \
--XX:+OptimizeStringConcat \
--Djava.awt.headless=true \
--Djava.net.preferIPv4Stack=true \
--Djava.net.preferIPv6Addresses=false \
--Dfile.encoding=UTF8 \
--Dsun.lang.ClassLoader.allowArraySyntax=true \
--Djava.util.Arrays.useLegacyMergeSort=true \
--Djsse.enableSNIExtension=false \
--XX:+PrintCommandLineFlags"
-
-export CATALINA_OPTS="-Dorg.apache.jasper.compiler.Parser.STRICT_QUOTE_ESCAPING=false \
--Dorg.apache.jasper.compiler.Parser.STRICT_WHITESPACE=false \
--Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true"
-# -Dsun.lang.ClassLoader.allowArraySyntax=true to run Sakai 2 under Java 6
-# -Dorg.apache.jasper.compiler.Parser.STRICT_QUOTE_ESCAPING=false for Tomcat 5.5.27+ JSF issues (e.g. OSP)
-
-###############################################################################
-# Maven
-###############################################################################
-# MacPorts
-if [[ -d '/usr/local/opt/maven/libexec' ]]; then
-    export M2_HOME=/usr/local/opt/maven/libexec
-fi
-if [[ -n "$M2_HOME" ]]; then
-    export PATH=$M2_HOME/bin:$PATH
-fi
-
-# export MAVEN_OPTS='-Xms168m -Xmx512m -XX:PermSize=24m -XX:NewSize=64m -Dmaven.test.skip=true -Dmaven.tomcat.home=/Develop/apache-tomcat-5.5.23'
-# export MAVEN_OPTS='-d64 -server -Xmx512m -Dmaven.test.skip=true -Dmaven.tomcat.home=/Develop/apache-tomcat-5.5.26 -Dcom.sun.management.jmxremote -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=30303,server=y,suspend=n'
-export MAVEN_OPTS='-Xmx1g -XX:MaxPermSize=512m'
-# export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib
-
-###############################################################################
-# mysql
-###############################################################################
-MYSQL_BIN_PATH="/opt/local/lib/mysql51/bin"
-if [[ "$OSTYPE" == darwin* ]] && [[ -d "$MYSQL_BIN_PATH" ]]; then
-    export PATH="$MYSQL_BIN_PATH:$PATH"
-fi
-
-###############################################################################
-# color related stuff
-###############################################################################
-# run colors from the command line to visualize different skins' colors
-function colors {
-    echo -e "\033[0mCOLOR_NC (No color)"
-    echo -e "\033[1;37mCOLOR_WHITE\t\033[0;30mCOLOR_BLACK"
-    echo -e "\033[0;34mCOLOR_BLUE\t\033[1;34mCOLOR_LIGHT_BLUE"
-    echo -e "\033[0;32mCOLOR_GREEN\t\033[1;32mCOLOR_LIGHT_GREEN"
-    echo -e "\033[0;36mCOLOR_CYAN\t\033[1;36mCOLOR_LIGHT_CYAN"
-    echo -e "\033[0;31mCOLOR_RED\t\033[1;31mCOLOR_LIGHT_RED"
-    echo -e "\033[0;35mCOLOR_PURPLE\t\033[1;35mCOLOR_LIGHT_PURPLE"
-    echo -e "\033[0;33mCOLOR_YELLOW\t\033[1;33mCOLOR_LIGHT_YELLOW"
-    echo -e "\033[1;30mCOLOR_GRAY\t\033[0;37mCOLOR_LIGHT_GRAY"
-}
 
 ###############################################################################
 # work arounds
 ###############################################################################
 # override some default prezto behavior
 unsetopt BEEP # workaround for visual beeping prezto https://github.com/skwp/dotfiles/issues/199
-unsetopt SHARE_HISTORY # don't share history by default
-unalias gcc # works around: __rvm_run_compiler:7: command not found: gcc
-# I don't like the deaults from runcoms/zshrc
-unalias cp
-unalias mv
-unalias rm
-
-###############################################################################
-# Completions
-###############################################################################
-#Auto complete SSH hosts
-zstyle -e ':completion::*:*:*:hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/ssh_config,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
-
-#gitflow
-[[ -s "${ZDOTDIR:-$HOME}/.zprezto/modules/git-flow/git-flow-completion.zsh" ]] && . "${ZDOTDIR:-$HOME}/.zprezto/modules/git-flow/git-flow-completion.zsh"
-
-
-
+#unsetopt SHARE_HISTORY # don't share history by default
+#unalias gcc # works around: __rvm_run_compiler:7: command not found: gcc
 
 
 ###############################################################################

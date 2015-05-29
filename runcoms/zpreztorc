@@ -38,6 +38,7 @@ zstyle ':prezto:load' pmodule \
 	'osx' \
 	'node' \
 	'tmux' \
+	'tmuxinator' \
 	'rvm' \
 	'python' \
 	'ruby' \
@@ -146,9 +147,9 @@ zstyle ':prezto:module:ssh:load' identities 'id_rsa' 'id_boot2docker'
 zstyle ':prezto:module:syntax-highlighting' highlighters \
    'main' \
    'brackets' \
+   'pattern' \
+   'cursor' \
    'root'
-#   'pattern' \
-#   'cursor' \
 #
 # Set syntax highlighting styles.
 # zstyle ':prezto:module:syntax-highlighting' styles \

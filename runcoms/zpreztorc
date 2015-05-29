@@ -50,6 +50,7 @@ zstyle ':prezto:load' pmodule \
 	'ssh' \
 	'node' \
 	'fasd' \
+	'lastworkingdir' \
 	'syntax-highlighting' \
 	'history-substring-search' \
 	'prompt' 
@@ -110,6 +111,8 @@ zstyle ':prezto:module:git:status:ignore' submodules 'all'
 # Setting it to 'random' loads a random theme.
 # Auto set to 'off' on dumb terminals.
 zstyle ':prezto:module:prompt' theme 'sorin'
+#zstyle ':prezto:module:prompt' theme 'agnoster'
+#zstyle ':prezto:module:prompt' theme 'powerline'
 
 #
 # Ruby

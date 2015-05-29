@@ -7,9 +7,6 @@
 
 export DOTFILES=$HOME/.dotfiles
 
-# reload zsh config
-alias reload!='source ~/.zshrc'
-
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
@@ -21,22 +18,24 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/functions.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/functions.zsh"
 fi
 
-# Base16 Shell
-if [ -z "$THEME" ]; then
-    export THEME="base16-atelierheath"
-fi
-if [ -z "$BACKGROUND" ]; then
-    export BACKGROUND="dark"
-fi
-
-BASE16_SHELL="$DOTFILES/.config/base16-shell/$THEME.$BACKGROUND.sh"
-# [[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
-source $BASE16_SHELL
-
 # Load local aliases if they exist
 if [[ -s "${ZDOTDIT:-$HOME}/.aliases" ]]; then
   source "${ZDOTDIT:-$HOME}/.aliases"
 fi
+
+
+
+## Base16 Shell
+#if [ -z "$THEME" ]; then
+#    export THEME="base16-atelierheath"
+#fi
+#if [ -z "$BACKGROUND" ]; then
+#    export BACKGROUND="dark"
+#fi
+#
+#BASE16_SHELL="$DOTFILES/.config/base16-shell/$THEME.$BACKGROUND.sh"
+## [[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
+#source $BASE16_SHELL
 
 
 ###############################################################################
@@ -63,6 +62,10 @@ alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias vlc='/Applications/VLC.app/Contents/MacOS/VLC --intf=rc'
 alias pip-update="pip freeze --local | sed 's/==.*//' | xargs -I % pip install -U %"
 alias nocomment="grep -v '^$\|^\s*\#'"
+
+# reload zsh config
+alias reload!='source ~/.zshrc'
+
 
 ###############################################################################
 # Functions
@@ -204,8 +207,8 @@ export CATALINA_OPTS="-Dorg.apache.jasper.compiler.Parser.STRICT_QUOTE_ESCAPING=
 # Maven
 ###############################################################################
 # MacPorts
-if [[ -d '/opt/local/share/java/maven3' ]]; then
-    export M2_HOME=/opt/local/share/java/maven3
+if [[ -d '/usr/local/opt/maven/libexec' ]]; then
+    export M2_HOME=/usr/local/opt/maven/libexec
 fi
 if [[ -n "$M2_HOME" ]]; then
     export PATH=$M2_HOME/bin:$PATH

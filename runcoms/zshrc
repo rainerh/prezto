@@ -21,8 +21,8 @@ fi
 
 # Customize to your needs...
 # Source functions.
-fpath=($ZSH/functions $fpath)
-autoload -U $ZSH/functions/*(:t)
+#fpath=($ZSH/functions $fpath)
+#autoload -U $ZSH/functions/*(:t)
 
 if [[ -s "${ZSH}/includes/functions.zsh" ]]; then
   source "${ZSH}/includes/functions.zsh"
